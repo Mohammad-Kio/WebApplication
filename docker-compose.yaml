@@ -1,0 +1,27 @@
+﻿version: "3"
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=test
+    restart: always
+    ports:
+      - "5432"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql
+#      - pgdata:/var/lib/postgresql/data
+  
+  mvc:
+    image: mohammadutd/mvcapp
+    depends_on:
+      - db
+    restart: always
+    environment:
+      - DB_CONNECTION_STRING=Host=db;Port=5432;Database=test;Username=postgres;Password=1234
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "8000:80"
+    command: ["dotnet", "ef", "database update"]
+    
